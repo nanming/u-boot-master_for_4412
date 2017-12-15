@@ -77,8 +77,16 @@ switch_to_hypervisor_ret:
 	mcr	p15, 0, r0, c12, c0, 0	@Set VBAR
 #endif
 
+
+	/* the mask ROM code should have PLL and others stable */
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT
+	bl	cpu_init_cp15
+#ifndef CONFIG_SKIP_LOWLEVEL_INIT_ONLY
+	bl	cpu_init_crit
+#endif
+#endif
         /* LED Test Code */
-        #if 1
+        #if 0
         ldr r0, =0x11000060
         ldr r1, [r0]
         bic r1, r1, #0xf0
@@ -91,14 +99,6 @@ switch_to_hypervisor_ret:
         orr r1, r1, #0x02
         str r1, [r0]
         #endif
-	/* the mask ROM code should have PLL and others stable */
-#ifndef CONFIG_SKIP_LOWLEVEL_INIT
-	bl	cpu_init_cp15
-#ifndef CONFIG_SKIP_LOWLEVEL_INIT_ONLY
-	bl	cpu_init_crit
-#endif
-#endif
-
 	bl	_main
 
 /*------------------------------------------------------------------------------*/

@@ -757,7 +757,31 @@ __weak int arch_cpu_init_dm(void)
 	return 0;
 }
 
+#define GPIO_L2_CON (*((volatile unsigned long *)0x11000100))
+#define GPIO_L2_DATA (*((volatile unsigned long *)0x11000104))
+
+#define GPIO_K_CON (*((volatile unsigned long *)0x11000060))
+#define GPIO_K_DATA (*((volatile unsigned long *)0x11000064))
+
+static int led_on_test(void)
+{
+	GPIO_L2_CON &= 0xfffffff0;
+	GPIO_L2_CON |= 0x1;
+
+	GPIO_L2_DATA &=0xfe;
+	GPIO_L2_DATA |= 0x1;
+
+	GPIO_K_CON &= 0xffffff0f;
+	GPIO_K_CON |= 0x10;
+
+	GPIO_K_DATA &=0xfd;
+	GPIO_K_DATA |=0x02;
+	return 0;
+}
+
+
 static const init_fnc_t init_sequence_f[] = {
+	led_on_test,
 	setup_mon_len,
 #ifdef CONFIG_OF_CONTROL
 	fdtdec_setup,
