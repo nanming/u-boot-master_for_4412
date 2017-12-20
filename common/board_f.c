@@ -763,7 +763,7 @@ __weak int arch_cpu_init_dm(void)
 #define GPIO_K_CON (*((volatile unsigned long *)0x11000060))
 #define GPIO_K_DATA (*((volatile unsigned long *)0x11000064))
 
-static int led_on_test(void)
+static int led_on_test_1(void)
 {
 	GPIO_L2_CON &= 0xfffffff0;
 	GPIO_L2_CON |= 0x1;
@@ -771,6 +771,11 @@ static int led_on_test(void)
 	GPIO_L2_DATA &=0xfe;
 	GPIO_L2_DATA |= 0x1;
 
+	return 0;
+}
+
+static int led_on_test_2(void)
+{
 	GPIO_K_CON &= 0xffffff0f;
 	GPIO_K_CON |= 0x10;
 
@@ -781,7 +786,6 @@ static int led_on_test(void)
 
 
 static const init_fnc_t init_sequence_f[] = {
-	led_on_test,
 	setup_mon_len,
 #ifdef CONFIG_OF_CONTROL
 	fdtdec_setup,
@@ -816,20 +820,15 @@ static const init_fnc_t init_sequence_f[] = {
 	init_baud_rate,		/* initialze baudrate settings */
 	serial_init,		/* serial communications setup */
 	console_init_f,		/* stage 1 init of console */
-	display_options,	/* say that we are here */
+//	display_options,	/* say that we are here */
 	display_text_info,	/* show debugging info if required */
 #if defined(CONFIG_PPC) || defined(CONFIG_M68K) || defined(CONFIG_SH) || \
 		defined(CONFIG_X86)
 	checkcpu,
 #endif
-#if defined(CONFIG_DISPLAY_CPUINFO)
-	print_cpuinfo,		/* display cpu info (and speed) */
-#endif
+	led_on_test_1,
 #if defined(CONFIG_DTB_RESELECT)
 	embedded_dtb_select,
-#endif
-#if defined(CONFIG_DISPLAY_BOARDINFO)
-	show_board_info,
 #endif
 	INIT_FUNC_WATCHDOG_INIT
 #if defined(CONFIG_MISC_INIT_F)
@@ -852,7 +851,6 @@ static const init_fnc_t init_sequence_f[] = {
 	testdram,
 #endif /* CONFIG_SYS_DRAM_TEST */
 	INIT_FUNC_WATCHDOG_RESET
-
 #ifdef CONFIG_POST
 	init_post,
 #endif
@@ -887,7 +885,7 @@ static const init_fnc_t init_sequence_f[] = {
 	reserve_board,
 	setup_machine,
 	reserve_global_data,
-	reserve_fdt,
+//	reserve_fdt,
 	reserve_bootstage,
 	reserve_arch,
 	reserve_stacks,
@@ -906,7 +904,7 @@ static const init_fnc_t init_sequence_f[] = {
 	fix_fdt,
 #endif
 	INIT_FUNC_WATCHDOG_RESET
-	reloc_fdt,
+//	reloc_fdt,
 	reloc_bootstage,
 	setup_reloc,
 #if defined(CONFIG_X86) || defined(CONFIG_ARC)
@@ -917,6 +915,7 @@ static const init_fnc_t init_sequence_f[] = {
 #if defined(CONFIG_XTENSA)
 	clear_bss,
 #endif
+	led_on_test_2,
 #if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX) && \
 		!CONFIG_IS_ENABLED(X86_64)
 	jump_to_copy,
