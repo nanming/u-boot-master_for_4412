@@ -246,6 +246,11 @@ ifeq ($(HOSTARCH),$(ARCH))
 CROSS_COMPILE ?=
 endif
 
+ARCH=arm
+ifeq ($(ARCH), arm)
+CROSS_COMPILE = /home/nanming/.tools/arm-2014.05/bin/arm-none-linux-gnueabi-
+endif
+
 KCONFIG_CONFIG	?= .config
 export KCONFIG_CONFIG
 

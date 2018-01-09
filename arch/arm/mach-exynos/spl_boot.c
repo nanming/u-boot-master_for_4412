@@ -283,12 +283,41 @@ static void setup_global_data(gd_t *gdp)
 	gd->have_console = 1;
 }
 
+#if 0
+#define GPIO_L2_CON (*((volatile unsigned long *)0x11000100))
+#define GPIO_L2_DATA (*((volatile unsigned long *)0x11000104))
+
+#define GPIO_K_CON (*((volatile unsigned long *)0x11000060))
+#define GPIO_K_DATA (*((volatile unsigned long *)0x11000064))
+
+static int led2_on(void)
+{
+	GPIO_L2_CON &= 0xfffffff0;
+	GPIO_L2_CON |= 0x1;
+
+	GPIO_L2_DATA &=0xfe;
+	GPIO_L2_DATA |= 0x1;
+
+	return 0;
+}
+
+static int led3_on(void)
+{
+	GPIO_K_CON &= 0xffffff0f;
+	GPIO_K_CON |= 0x10;
+
+	GPIO_K_DATA &=0xfd;
+	GPIO_K_DATA |=0x02;
+	return 0;
+}
+#endif
 void board_init_f(unsigned long bootflag)
 {
 	__aligned(8) gd_t local_gd;
 	__attribute__((noreturn)) void (*uboot)(void);
 
 	setup_global_data(&local_gd);
+	//led3_on();
 
 	if (do_lowlevel_init())
 		power_exit_wakeup();

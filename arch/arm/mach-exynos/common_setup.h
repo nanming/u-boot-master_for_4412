@@ -36,6 +36,7 @@ void mem_ctrl_init(int reset);
 
  /* System Clock initialization */
 void system_clock_init(void);
+void board_clock_init(void);
 
 /*
  * Init subsystems according to the reset status

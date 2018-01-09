@@ -344,9 +344,9 @@
 					| (sdiv << 0))
 
 /* APLL_CON0 */
-#define APLL_MDIV		0xFA
-#define APLL_PDIV		0x6
-#define APLL_SDIV		0x1
+#define APLL_MDIV		0x7D
+#define APLL_PDIV		0x3
+#define APLL_SDIV		0x0
 #define APLL_CON0_VAL		SET_PLL(APLL_MDIV, APLL_PDIV, APLL_SDIV)
 
 /* APLL_CON1 */
@@ -355,9 +355,9 @@
 #define APLL_CON1_VAL		((APLL_AFC_ENB << 31) | (APLL_AFC << 0))
 
 /* MPLL_CON0 */
-#define MPLL_MDIV		0xC8
-#define MPLL_PDIV		0x6
-#define MPLL_SDIV		0x1
+#define MPLL_MDIV		0x64
+#define MPLL_PDIV		0x3
+#define MPLL_SDIV		0x0
 #define MPLL_CON0_VAL		SET_PLL(MPLL_MDIV, MPLL_PDIV, MPLL_SDIV)
 
 /* MPLL_CON1 */

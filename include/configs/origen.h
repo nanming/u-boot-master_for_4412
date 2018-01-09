@@ -17,8 +17,8 @@
 
 #define CONFIG_SYS_DCACHE_OFF		1
 
-/* ORIGEN has 4 bank of DRAM */
-#define CONFIG_NR_DRAM_BANKS		4
+/* ORIGEN has 8 bank of DRAM */
+#define CONFIG_NR_DRAM_BANKS		8
 #define CONFIG_SYS_SDRAM_BASE		0x40000000
 #define PHYS_SDRAM_1			CONFIG_SYS_SDRAM_BASE
 #define SDRAM_BANK_SIZE			(256 << 20)	/* 256 MB */
@@ -36,7 +36,7 @@
 #define CONFIG_SERIAL2
 
 /* Console configuration */
-#define CONFIG_DEFAULT_CONSOLE		"console=ttySAC1,115200n8\0"
+#define CONFIG_DEFAULT_CONSOLE		"console=ttySAC2,115200n8\0"
 
 #define CONFIG_SYS_MEM_TOP_HIDE	(1 << 20)	/* ram console */
 
@@ -51,7 +51,8 @@
 
 /* MMC SPL */
 #define COPY_BL2_FNPTR_ADDR	0x02020030
-#define CONFIG_SPL_TEXT_BASE	0x02021410
+/*#define CONFIG_SPL_TEXT_BASE	0x02021410*/
+#define CONFIG_SPL_TEXT_BASE	0x02023400
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"loadaddr=0x40007000\0" \
@@ -97,7 +98,7 @@
 
 #define CONFIG_SPL_MAX_FOOTPRINT	(14 * 1024)
 
-#define CONFIG_SYS_INIT_SP_ADDR		0x02040000
+#define CONFIG_SYS_INIT_SP_ADDR		0x02060000
 
 /* U-Boot copy size from boot Media to DRAM.*/
 #define COPY_BL2_SIZE		0x80000

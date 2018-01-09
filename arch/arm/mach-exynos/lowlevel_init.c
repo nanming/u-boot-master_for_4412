@@ -168,13 +168,61 @@ static void secondary_cores_configure(void)
 extern void relocate_wait_code(void);
 #endif
 
+#if 1
+#define GPIO_L2_CON (*((volatile unsigned int *)0x11000100))
+#define GPIO_L2_DATA (*((volatile unsigned int *)0x11000104))
+
+#define GPIO_K_CON (*((volatile unsigned int *)0x11000060))
+#define GPIO_K_DATA (*((volatile unsigned int *)0x11000064))
+
+#define GPIO_D_CON (*((volatile unsigned int *)0x114000A0))
+#define GPIO_D_DATA (*((volatile unsigned int *)0x114000A4))
+#define PS_HOLD_HIGH (*((volatile unsigned int *)0x1002330C))
+
+static int led2_on(void)
+{
+	GPIO_L2_CON &= 0xfffffff0;
+	GPIO_L2_CON |= 0x1;
+
+	GPIO_L2_DATA &=0xfe;
+	GPIO_L2_DATA |= 0x1;
+
+	return 0;
+}
+
+static int led3_on(void)
+{
+	GPIO_K_CON &= 0xffffff0f;
+	GPIO_K_CON |= 0x10;
+
+	GPIO_K_DATA &=0xfd;
+	GPIO_K_DATA |=0x02;
+	return 0;
+}
+
+static int beeps_on(void)
+{
+	GPIO_D_CON &= 0xfffffff0;
+	GPIO_D_CON |= 0x1;
+
+	GPIO_D_DATA &=0xfe;
+	GPIO_D_DATA |=0x1;
+	return 0;
+}
+
+static int _set_ps_hold_ctrl(void)
+{
+	PS_HOLD_HIGH = 0x00005300;
+	return 0;
+}
+
+#endif
 int do_lowlevel_init(void)
 {
 	uint32_t reset_status;
 	int actions = 0;
-
+	//led2_on();
 	arch_cpu_init();
-
 #if !defined(CONFIG_SYS_L2CACHE_OFF) && defined(CONFIG_EXYNOS5420)
 	/*
 	 * Init L2 cache parameters here for use by boot and resume
@@ -194,7 +242,6 @@ int do_lowlevel_init(void)
 	/* Reconfigure secondary cores */
 	secondary_cores_configure();
 #endif
-
 	reset_status = get_reset_status();
 
 	switch (reset_status) {
@@ -211,19 +258,24 @@ int do_lowlevel_init(void)
 	}
 
 	if (actions & DO_POWER)
-		set_ps_hold_ctrl();
+		_set_ps_hold_ctrl();
 
 	if (actions & DO_CLOCKS) {
-		system_clock_init();
+		board_clock_init();
 #ifdef CONFIG_DEBUG_UART
 #if (defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_SERIAL_SUPPORT)) || \
     !defined(CONFIG_SPL_BUILD)
-		exynos_pinmux_config(PERIPH_ID_UART3, PINMUX_FLAG_NONE);
+	    exynos_pinmux_config(PERIPH_ID_UART4, PINMUX_FLAG_NONE);
+        exynos_pinmux_config(PERIPH_ID_UART3, PINMUX_FLAG_NONE);
+		exynos_pinmux_config(PERIPH_ID_UART2, PINMUX_FLAG_NONE);
+		exynos_pinmux_config(PERIPH_ID_UART1, PINMUX_FLAG_NONE);
 		debug_uart_init();
 #endif
 #endif
 		mem_ctrl_init(actions & DO_MEM_RESET);
 		tzpc_init();
+		led2_on();
+		//beeps_on();
 	}
 
 	return actions & DO_WAKEUP;
