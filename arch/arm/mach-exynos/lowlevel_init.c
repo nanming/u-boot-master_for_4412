@@ -263,9 +263,11 @@ int do_lowlevel_init(void)
 	if (actions & DO_CLOCKS) {
 		board_clock_init();
 #ifdef CONFIG_DEBUG_UART
+
 #if (defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_SERIAL_SUPPORT)) || \
     !defined(CONFIG_SPL_BUILD)
-	    exynos_pinmux_config(PERIPH_ID_UART4, PINMUX_FLAG_NONE);
+    	led2_on();
+		beeps_on();
         exynos_pinmux_config(PERIPH_ID_UART3, PINMUX_FLAG_NONE);
 		exynos_pinmux_config(PERIPH_ID_UART2, PINMUX_FLAG_NONE);
 		exynos_pinmux_config(PERIPH_ID_UART1, PINMUX_FLAG_NONE);
@@ -274,7 +276,7 @@ int do_lowlevel_init(void)
 #endif
 		mem_ctrl_init(actions & DO_MEM_RESET);
 		tzpc_init();
-		led2_on();
+		//led2_on();
 		//beeps_on();
 	}
 
