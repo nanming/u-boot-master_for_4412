@@ -251,6 +251,9 @@ static inline void _debug_uart_putc(int ch)
 
 	writeb(ch, &uart->utxh);
 }
+void board_debug_uart_init(void)
+{
+}
 
 DEBUG_UART_FUNCS
 

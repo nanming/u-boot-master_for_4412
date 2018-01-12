@@ -267,7 +267,7 @@ int do_lowlevel_init(void)
 #if (defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_SERIAL_SUPPORT)) || \
     !defined(CONFIG_SPL_BUILD)
     	led2_on();
-		beeps_on();
+		//beeps_on();
         exynos_pinmux_config(PERIPH_ID_UART3, PINMUX_FLAG_NONE);
 		exynos_pinmux_config(PERIPH_ID_UART2, PINMUX_FLAG_NONE);
 		exynos_pinmux_config(PERIPH_ID_UART1, PINMUX_FLAG_NONE);

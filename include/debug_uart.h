@@ -176,8 +176,6 @@ void printhex8(uint value);
 	{ \
 		board_debug_uart_init(); \
 		_debug_uart_init(); \
-		printch('H');\
-		printch('W');\
 		_DEBUG_UART_ANNOUNCE \
 	} \
 

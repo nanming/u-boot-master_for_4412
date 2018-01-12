@@ -93,8 +93,10 @@
 #define CONFIG_SYS_MMC_ENV_DEV		0
 #define CONFIG_ENV_SIZE			(16 << 10)	/* 16 KB */
 #define RESERVE_BLOCK_SIZE		(512)
-#define BL1_SIZE			(16 << 10) /*16 K reserved for BL1*/
-#define CONFIG_ENV_OFFSET		(RESERVE_BLOCK_SIZE + BL1_SIZE)
+#define BL1_SIZE			(8 << 10) /*8 K reserved for BL1*/
+#define BL2_SIZE			(16 << 10) /*16 K reserved for BL2*/
+
+#define CONFIG_ENV_OFFSET		(RESERVE_BLOCK_SIZE + BL1_SIZE+BL2_SIZE)
 
 #define CONFIG_SPL_MAX_FOOTPRINT	(14 * 1024)
 
@@ -102,7 +104,11 @@
 
 /* U-Boot copy size from boot Media to DRAM.*/
 #define COPY_BL2_SIZE		0x80000
+#define COPY_UBOOT_SIZE		0x80000
+
 #define BL2_START_OFFSET	((CONFIG_ENV_OFFSET + CONFIG_ENV_SIZE)/512)
 #define BL2_SIZE_BLOC_COUNT	(COPY_BL2_SIZE/512)
+#define UBOOT_START_OFFSET	((CONFIG_ENV_OFFSET + CONFIG_ENV_SIZE)/512)
+#define UBOOT_SIZE_BLOC_COUNT	(COPY_UBOOT_SIZE/512)
 
 #endif	/* __CONFIG_H */
