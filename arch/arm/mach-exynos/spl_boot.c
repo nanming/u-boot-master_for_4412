@@ -253,6 +253,7 @@ void copy_uboot_to_ram(void)
 	default:
 		break;
 	}
+	#if 0
 	printascii("\n\n0x02023400 read:");
 	printhex8(*(unsigned int *)0x02023400);
 	printascii(" ");
@@ -271,6 +272,7 @@ void copy_uboot_to_ram(void)
 	printascii(" ");
 	printhex8(*(unsigned int *)(0x02045000+4));
 	printascii("\n");
+	#endif
 	if (copy_bl2)
 		copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
 }
