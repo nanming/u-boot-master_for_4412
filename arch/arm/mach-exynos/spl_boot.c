@@ -18,7 +18,7 @@
 
 #include "common_setup.h"
 #include "clock_init.h"
-
+#include <debug_uart.h>
 DECLARE_GLOBAL_DATA_PTR;
 
 /* Index into irom ptr table */
@@ -253,7 +253,24 @@ void copy_uboot_to_ram(void)
 	default:
 		break;
 	}
-
+	printascii("\n\n0x02023400 read:");
+	printhex8(*(unsigned int *)0x02023400);
+	printascii(" ");
+	printhex8(*(unsigned int *)(0x02023400+4));
+	
+	printascii("\n\n===============\n\n" );
+	printascii("before copy_bl2 0x02045000:\n" );
+	printhex8(*(unsigned int *)0x02045000);
+	printascii(" ");
+	printhex8(*(unsigned int *)(0x02045000+4));
+	printascii("\n===============\n\n" );
+	if (copy_bl2)
+		copy_bl2(17, (16<<10)/512, 0x02045000);
+	printascii("after copy_bl2 0x02045000:\n" );	
+	printhex8(*(unsigned int *)0x02045000);
+	printascii(" ");
+	printhex8(*(unsigned int *)(0x02045000+4));
+	printascii("\n");
 	if (copy_bl2)
 		copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
 }

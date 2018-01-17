@@ -100,7 +100,7 @@
 
 #define CONFIG_SPL_MAX_FOOTPRINT	(14 * 1024)
 
-#define CONFIG_SYS_INIT_SP_ADDR		0x02060000
+#define CONFIG_SYS_INIT_SP_ADDR		0x02040000
 
 /* U-Boot copy size from boot Media to DRAM.*/
 #define COPY_BL2_SIZE		0x80000

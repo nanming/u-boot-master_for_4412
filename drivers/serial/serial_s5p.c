@@ -220,25 +220,10 @@ U_BOOT_DRIVER(serial_s5p) = {
 #ifdef CONFIG_DEBUG_UART_S5P
 
 #include <debug_uart.h>
-#if 1
-#define GPIO_L2_CON (*((volatile unsigned int *)0x11000100))
-#define GPIO_L2_DATA (*((volatile unsigned int *)0x11000104))
-static int led2_on(void)
-{
-	GPIO_L2_CON &= 0xfffffff0;
-	GPIO_L2_CON |= 0x1;
-
-	GPIO_L2_DATA &=0xfe;
-	GPIO_L2_DATA |= 0x1;
-
-	return 0;
-}
-#endif
 
 static inline void _debug_uart_init(void)
 {
 	struct s5p_uart *uart = (struct s5p_uart *)CONFIG_DEBUG_UART_BASE;
-	led2_on();
 	s5p_serial_init(uart);
 	s5p_serial_baud(uart, CONFIG_DEBUG_UART_CLOCK, CONFIG_BAUDRATE);
 }

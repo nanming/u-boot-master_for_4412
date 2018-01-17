@@ -78,6 +78,35 @@
 				DIV_HPM(DIV_STAT_CHANGING) | \
 				DIV_CORES(DIV_STAT_CHANGING))
 
+/* CLK_SRC_TOP0 */
+#define MUX_ONENAND_1_SEL(x)		((x) & 0x1)
+#define MUX_EPLL_SEL(x)		(((x) & 0x1)<<4)
+#define MUX_VPLL_SEL(x)		(((x) & 0x1)<<8)
+#define MUX_ACLK_200_SEL(x)	(((x) & 0x1)<<12)
+#define MUX_ACLK_100_SEL(x)	(((x) & 0x1)<<16)
+#define MUX_ACLK_160_SEL(x)	(((x) & 0x1)<<20)
+#define MUX_ACLK_133_SEL(x)	(((x) & 0x1)<<24)
+#define MUX_ONENAND_SEL(x)   (((x) & 0x1)<<28)
+
+/* CLK_MUX_STAT_TOP0 */
+#define ONENAND_SEL(x)		(((x) & 0x1) << 28)
+#define ACLK_133_SEL(x)		(((x) & 0x1) << 24)
+#define ACLK_160_SEL(x)		(((x) & 0x1) << 20)
+#define ACLK_100_SEL(x)		(((x) & 0x1) << 16)
+#define ACLK_200_SEL(x)		(((x) & 0x1) << 12)
+#define VPLL_SEL(x)			(((x) & 0x1) << 8)
+#define EPLL_SEL(x)			(((x) & 0x1) << 4)
+#define ONENAND_1_SEL(x)		((x) & 0x1)
+
+#define MUX_STAT_TOP0_CHANGING	(EPLL_SEL(MUX_STAT_CHANGING) | \
+				VPLL_SEL(MUX_STAT_CHANGING) | \
+				ACLK_200_SEL(MUX_STAT_CHANGING) |\
+				ACLK_100_SEL(MUX_STAT_CHANGING) | \
+				ACLK_160_SEL(MUX_STAT_CHANGING) | \
+				ONENAND_SEL(MUX_STAT_CHANGING) |\
+				ACLK_133_SEL(MUX_STAT_CHANGING))
+
+
 /* CLK_SRC_DMC */
 #define MUX_C2C_SEL(x)		((x) & 0x1)
 #define MUX_DMC_BUS_SEL(x)	(((x) & 0x1) << 4)

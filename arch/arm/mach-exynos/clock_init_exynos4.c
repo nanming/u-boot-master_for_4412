@@ -105,6 +105,7 @@ void system_clock_init(void)
 void board_clock_init(void)
 {
 	unsigned int set, clr, clr_src_cpu, clr_pll_con0, clr_src_dmc;
+	unsigned int clr_src_top0;
 	struct exynos4x12_clock *clk = (struct exynos4x12_clock *)
 						samsung_get_base_clock();
 
@@ -210,7 +211,8 @@ void board_clock_init(void)
 	/* Wait for mux change */
 	while (readl(&clk->mux_stat_dmc) & MUX_STAT_DMC_CHANGING)
 		continue;
-
+#if 1
+#if 0
 	/* Set MPLL to 800MHz */
 	set = SDIV(0) | PDIV(3) | MDIV(100) | FSEL(0) | PLL_ENABLE(1);
 
@@ -219,7 +221,7 @@ void board_clock_init(void)
 	/* Wait for PLL to be locked */
 	while (!(readl(&clk->mpll_con0) & PLL_LOCKED_BIT))
 		continue;
-
+#endif
 	/* Switch back CMU_DMC mux */
 	set = MUX_C2C_SEL(0) | MUX_DMC_BUS_SEL(0) | MUX_DPHY_SEL(0) |
 	      MUX_MPLL_SEL(1) | MUX_PWI_SEL(8) | MUX_G2D_ACP0_SEL(0) |
@@ -302,14 +304,14 @@ void board_clock_init(void)
 	 *
 	 * SCLK_UARTx = MOUTuartX / (ratio + 1) = 100 (7)
 	*/
-	set = UART0_RATIO(7) | UART1_RATIO(7) | UART2_RATIO(7) |
-	      UART3_RATIO(7) | UART4_RATIO(7);
+	set = UART0_RATIO(3) | UART1_RATIO(3) | UART2_RATIO(3) |
+	      UART3_RATIO(3) | UART4_RATIO(3);
 
 	clrsetbits_le32(&clk->div_peril0, clr, set);
 
 	while (readl(&clk->div_stat_peril0) & DIV_STAT_PERIL0_CHANGING)
 		continue;
-
+#if 0
 	/* CLK_DIV_FSYS1 */
 	clr = MMC0_RATIO(15) | MMC0_PRE_RATIO(255) | MMC1_RATIO(15) |
 	      MMC1_PRE_RATIO(255);
@@ -365,7 +367,63 @@ void board_clock_init(void)
 	/* Wait for divider ready status */
 	while (readl(&clk->div_stat_fsys3) & DIV_STAT_FSYS3_CHANGING)
 		continue;
+#endif
+#endif
 
+/*EPLL For UART TEST*/
+#if 0
+	/* Set EPLL to 400MHz */
+	set = SDIV(1) | PDIV(3) | MDIV(100) | PLL_ENABLE(1);
+
+	clrsetbits_le32(&clk->epll_con0, clr_pll_con0, set);
+
+	/* Wait for PLL to be locked */
+	while (!(readl(&clk->epll_con0) & PLL_LOCKED_BIT))
+		continue;
+
+	clr_src_top0 = MUX_ONENAND_1_SEL(1) |MUX_EPLL_SEL(1) |MUX_VPLL_SEL(1) |
+		MUX_ACLK_200_SEL(1) |MUX_ACLK_100_SEL(1) |MUX_ACLK_160_SEL(1) |
+		MUX_ACLK_133_SEL(1) |MUX_ONENAND_SEL(1);
+	
+	set = MUX_ONENAND_1_SEL(1) |MUX_EPLL_SEL(1) |MUX_VPLL_SEL(1) |
+		MUX_ACLK_200_SEL(1) |MUX_ACLK_100_SEL(1) |MUX_ACLK_160_SEL(1) |
+		MUX_ACLK_133_SEL(1) |MUX_ONENAND_SEL(1);
+
+	clrsetbits_le32(&clk->src_top0, clr_src_top0, set);
+	while ((readl(&clk->mux_stat_top0) &MUX_STAT_TOP0_CHANGING))
+		continue;
+	/* CLK_SRC_PERIL0 */
+	clr = UART0_SEL(15) | UART1_SEL(15) | UART2_SEL(15) |
+	      UART3_SEL(15) | UART4_SEL(15);
+	/*
+	 * Set CLK_SRC_PERIL0 clocks src to MPLL
+	 * src values: 0(XXTI); 1(XusbXTI); 2(SCLK_HDMI24M); 3(SCLK_USBPHY0);
+	 *             5(SCLK_HDMIPHY); 6(SCLK_MPLL_USER_T); 7(SCLK_EPLL);
+	 *             8(SCLK_VPLL)
+	 *
+	 * Set all to SCLK_MPLL_USER_T
+	 */
+	set = UART0_SEL(7) | UART1_SEL(7) | UART2_SEL(7) | UART3_SEL(7) |
+	      UART4_SEL(7);
+
+	clrsetbits_le32(&clk->src_peril0, clr, set);
+
+	/* CLK_DIV_PERIL0 */
+	clr = UART0_RATIO(15) | UART1_RATIO(15) | UART2_RATIO(15) |
+	      UART3_RATIO(15) | UART4_RATIO(15);
+	/*
+	 * For MOUTuart0-4: 800MHz
+	 *
+	 * SCLK_UARTx = MOUTuartX / (ratio + 1) = 100 (7)
+	*/
+	set = UART0_RATIO(3) | UART1_RATIO(3) | UART2_RATIO(3) |
+	      UART3_RATIO(3) | UART4_RATIO(3);
+
+	clrsetbits_le32(&clk->div_peril0, clr, set);
+
+	while (readl(&clk->div_stat_peril0) & DIV_STAT_PERIL0_CHANGING)
+		continue;
+#endif
 	return;
 }
 
