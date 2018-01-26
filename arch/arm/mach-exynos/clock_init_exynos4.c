@@ -105,7 +105,6 @@ void system_clock_init(void)
 void board_clock_init(void)
 {
 	unsigned int set, clr, clr_src_cpu, clr_pll_con0, clr_src_dmc;
-	unsigned int clr_src_top0;
 	struct exynos4x12_clock *clk = (struct exynos4x12_clock *)
 						samsung_get_base_clock();
 
@@ -211,8 +210,7 @@ void board_clock_init(void)
 	/* Wait for mux change */
 	while (readl(&clk->mux_stat_dmc) & MUX_STAT_DMC_CHANGING)
 		continue;
-#if 1
-#if 0
+
 	/* Set MPLL to 800MHz */
 	set = SDIV(0) | PDIV(3) | MDIV(100) | FSEL(0) | PLL_ENABLE(1);
 
@@ -221,7 +219,7 @@ void board_clock_init(void)
 	/* Wait for PLL to be locked */
 	while (!(readl(&clk->mpll_con0) & PLL_LOCKED_BIT))
 		continue;
-#endif
+	
 	/* Switch back CMU_DMC mux */
 	set = MUX_C2C_SEL(0) | MUX_DMC_BUS_SEL(0) | MUX_DPHY_SEL(0) |
 	      MUX_MPLL_SEL(1) | MUX_PWI_SEL(8) | MUX_G2D_ACP0_SEL(0) |
@@ -304,14 +302,14 @@ void board_clock_init(void)
 	 *
 	 * SCLK_UARTx = MOUTuartX / (ratio + 1) = 100 (7)
 	*/
-	set = UART0_RATIO(3) | UART1_RATIO(3) | UART2_RATIO(3) |
-	      UART3_RATIO(3) | UART4_RATIO(3);
+	set = UART0_RATIO(7) | UART1_RATIO(7) | UART2_RATIO(7) |
+	      UART3_RATIO(7) | UART4_RATIO(7);
 
 	clrsetbits_le32(&clk->div_peril0, clr, set);
 
 	while (readl(&clk->div_stat_peril0) & DIV_STAT_PERIL0_CHANGING)
 		continue;
-#if 0
+#if 1
 	/* CLK_DIV_FSYS1 */
 	clr = MMC0_RATIO(15) | MMC0_PRE_RATIO(255) | MMC1_RATIO(15) |
 	      MMC1_PRE_RATIO(255);
@@ -323,8 +321,8 @@ void board_clock_init(void)
 	 * DOUTmmc0 = MOUTmmc0 / (ratio + 1) = 100 (7)
 	 * sclk_mmc0 = DOUTmmc0 / (ratio + 1) = 50 (1)
 	*/
-	set = MMC0_RATIO(7) | MMC0_PRE_RATIO(1) | MMC1_RATIO(7) |
-	      MMC1_PRE_RATIO(1);
+	set = MMC0_RATIO(7) | MMC0_PRE_RATIO(4) | MMC1_RATIO(7) |
+	      MMC1_PRE_RATIO(4);
 
 	clrsetbits_le32(&clk->div_fsys1, clr, set);
 
@@ -343,8 +341,8 @@ void board_clock_init(void)
 	 * DOUTmmc2 = MOUTmmc2 / (ratio + 1) = 100 (7)
 	 * sclk_mmc2 = DOUTmmc2 / (ratio + 1) = 50 (1)
 	*/
-	set = MMC2_RATIO(7) | MMC2_PRE_RATIO(1) | MMC3_RATIO(7) |
-	      MMC3_PRE_RATIO(1);
+	set = MMC2_RATIO(7) | MMC2_PRE_RATIO(4) | MMC3_RATIO(7) |
+	      MMC3_PRE_RATIO(4);
 
 	clrsetbits_le32(&clk->div_fsys2, clr, set);
 
@@ -360,14 +358,13 @@ void board_clock_init(void)
 	 * DOUTmmc4 = MOUTmmc4 / (ratio + 1) = 100 (7)
 	 * sclk_mmc4 = DOUTmmc4 / (ratio + 1) = 100 (0)
 	*/
-	set = MMC4_RATIO(7) | MMC4_PRE_RATIO(0);
+	set = MMC4_RATIO(7) | MMC4_PRE_RATIO(4);
 
 	clrsetbits_le32(&clk->div_fsys3, clr, set);
 
 	/* Wait for divider ready status */
 	while (readl(&clk->div_stat_fsys3) & DIV_STAT_FSYS3_CHANGING)
 		continue;
-#endif
 #endif
 
 /*EPLL For UART TEST*/

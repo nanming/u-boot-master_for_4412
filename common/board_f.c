@@ -41,7 +41,7 @@
 #include <asm/sections.h>
 #include <dm/root.h>
 #include <linux/errno.h>
-
+#include <debug_uart.h>
 /*
  * Pointer to initial global data area
  *
@@ -784,7 +784,7 @@ static int led3_on(void)
 
 static const init_fnc_t init_sequence_f[] = {
 	led3_on,
-	beeps_on,
+	//beeps_on,
 	setup_mon_len,
 #ifdef CONFIG_OF_CONTROL
 	fdtdec_setup,
@@ -931,6 +931,7 @@ void board_init_f(ulong boot_flags)
 {
 	gd->flags = boot_flags;
 	gd->have_console = 0;
+	printascii("\nuboot running\n" );
 
 	if (initcall_run_list(init_sequence_f))
 		hang();

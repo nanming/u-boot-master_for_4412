@@ -253,12 +253,12 @@ void copy_uboot_to_ram(void)
 	default:
 		break;
 	}
-	#if 0
+	
+#if 0
 	printascii("\n\n0x02023400 read:");
 	printhex8(*(unsigned int *)0x02023400);
 	printascii(" ");
 	printhex8(*(unsigned int *)(0x02023400+4));
-	
 	printascii("\n\n===============\n\n" );
 	printascii("before copy_bl2 0x02045000:\n" );
 	printhex8(*(unsigned int *)0x02045000);
@@ -272,9 +272,47 @@ void copy_uboot_to_ram(void)
 	printascii(" ");
 	printhex8(*(unsigned int *)(0x02045000+4));
 	printascii("\n");
-	#endif
+
+	printascii("\n0x02050000 read:");
+	printhex8(*(unsigned int *)0x02050000);
+	writel(0x11111111,(unsigned int *)0x02050000);
+	printhex8(*(unsigned int *)0x02050000);
+
+	printascii("\n0x43E00000 read:");
+	printhex8(*(unsigned int *)0x43E00000);
+	writel(0x11111111,(unsigned int *)0x43E00000);
+	printhex8(*(unsigned int *)0x43E00000);
+
+	printascii("\n0xA0000000 read:");
+	printhex8(*(unsigned int *)0xA0000000);
+	writel(0x11111111,(unsigned int *)0xA0000000);
+	printhex8(*(unsigned int *)0xA0000000);
+#endif
+ #if 0
 	if (copy_bl2)
 		copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
+#endif
+#if 1
+	if (copy_bl2) {
+		int i = 0;
+		unsigned char *buffer = (unsigned char *)0x02050000;
+		unsigned char *dest =(unsigned char  *)CONFIG_SYS_TEXT_BASE;
+		for (i=0;i<8;i++){
+			copy_bl2(offset, 0x10000/512, 0x02050000);
+			offset += 0x10000/512;
+			int j = 0;
+			for (j=0;j<0x10000;j++) {
+				*dest++ = buffer[j];
+			}
+		}
+	}
+#endif
+	printascii("\nafter copy_bl2 0x43E00000:\n" );
+	//writel(0x12345678,(unsigned int *)(0x43E00000+0x5a4d0));
+	printhex8(*(unsigned int *)0x43E00000);
+	printascii(" ");
+	printhex8(*(unsigned int *)(0x43E00000+0x5a4d0));
+	printascii("\n");
 }
 
 void memzero(void *s, size_t n)

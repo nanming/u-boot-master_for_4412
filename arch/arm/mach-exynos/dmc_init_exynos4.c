@@ -175,6 +175,7 @@ void mem_ctrl_init(int reset)
 	 * 0: full_sync
 	 */
 	writel(1, ASYNC_CONFIG);
+#if 0
 #ifdef CONFIG_ORIGEN
 	/* Interleave: 2Bit, Interleave_bit1: 0x15, Interleave_bit0: 0x7 */
 	writel(APB_SFR_INTERLEAVE_CONF_VAL, EXYNOS4_MIU_BASE +
@@ -202,6 +203,7 @@ void mem_ctrl_init(int reset)
 		ABP_SFR_SLV1_SINGLE_ADDRMAP_END_OFFSET);
 	writel(APB_SFR_SLV_ADDR_MAP_CONF_VAL, EXYNOS4_MIU_BASE +
 		ABP_SFR_SLV_ADDRMAP_CONF_OFFSET);
+#endif
 #endif
 #endif
 	/* DREX0 */

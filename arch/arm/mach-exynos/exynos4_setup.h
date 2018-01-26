@@ -516,19 +516,22 @@ struct mem_timings {
 
 #define CHIP_BANK_8		(0x3 << 0)
 #define CHIP_ROW_14		(0x2 << 4)
+#define CHIP_ROW_15		(0x3 << 4)
+
 #define CHIP_COL_10		(0x3 << 8)
 #define CHIP_MAP_INTERLEAVED	(1 << 12)
-#define CHIP_MASK		(0xe0 << 16)
+#define CHIP_MASK		(0x80 << 16)
+
 #ifdef CONFIG_MIU_LINEAR
 #define CHIP0_BASE		(0x40 << 24)
-#define CHIP1_BASE		(0x60 << 24)
+#define CHIP1_BASE		(0xA0 << 24)
 #else
-#define CHIP0_BASE		(0x20 << 24)
-#define CHIP1_BASE		(0x40 << 24)
+#define CHIP0_BASE		(0x40 << 24)
+#define CHIP1_BASE		(0xA0 << 24)
 #endif
-#define MEMCONFIG0_VAL		(CHIP_BANK_8 | CHIP_ROW_14 | CHIP_COL_10\
+#define MEMCONFIG0_VAL		(CHIP_BANK_8 | CHIP_ROW_15 | CHIP_COL_10\
 				| CHIP_MAP_INTERLEAVED | CHIP_MASK | CHIP0_BASE)
-#define MEMCONFIG1_VAL		(CHIP_BANK_8 | CHIP_ROW_14 | CHIP_COL_10\
+#define MEMCONFIG1_VAL		(CHIP_BANK_8 | CHIP_ROW_15 | CHIP_COL_10\
 				| CHIP_MAP_INTERLEAVED | CHIP_MASK | CHIP1_BASE)
 
 #define TP_CNT			(0xff << 24)

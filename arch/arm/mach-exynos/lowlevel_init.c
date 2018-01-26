@@ -274,7 +274,7 @@ int do_lowlevel_init(void)
 #endif
 		mem_ctrl_init(actions & DO_MEM_RESET);
 		tzpc_init();
-		led3_on();
+//		led3_on();
 	}
 
 	return actions & DO_WAKEUP;
