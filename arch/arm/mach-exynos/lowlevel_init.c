@@ -212,7 +212,9 @@ static int beeps_on(void)
 
 static int _set_ps_hold_ctrl(void)
 {
-	PS_HOLD_HIGH = 0x00005300;
+	//PS_HOLD_HIGH = 0x00005300;
+	writel(readl(0x1002330c) | 0x300, 0x1002330c);
+	writel(0, 0x11000c08);
 	return 0;
 }
 
@@ -273,7 +275,7 @@ int do_lowlevel_init(void)
 #endif
 #endif
 		mem_ctrl_init(actions & DO_MEM_RESET);
-		tzpc_init();
+		//tzpc_init();
 //		led3_on();
 	}
 

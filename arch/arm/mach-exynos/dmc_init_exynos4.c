@@ -84,12 +84,19 @@ static void dmc_init(struct exynos4_dmc *dmc)
 	 * Termination: Enable R/W
 	 * Phase Delay for DQS Cleaning: 180' Shift
 	 */
+
+	/*2. If on die termination is required, enable PhyControl1.term_write_en, PhyControl1.term_read_en.
+	*/
 	writel(mem.control1, &dmc->phycontrol1);
 
 	/*
 	 * ZQ Calibration
 	 * Termination: Disable
 	 * Auto Calibration Start: Enable
+	 */
+	 /*3. If ZQ calibration is required, disable PhyZQControl.ctrl_zq_mode_noterm and enable PhyZQControl.ctrl_zq_start 
+	 so that the PHY automatically calibrates the I/Os to match the driving and termination impedance by referencing resistor 
+	 value of an external resistor and updates the matched value during auto re-fresh cycles.
 	 */
 	writel(mem.zqcontrol, &dmc->phyzqcontrol);
 	sdelay(0x100000);
@@ -98,18 +105,26 @@ static void dmc_init(struct exynos4_dmc *dmc)
 	 * Update DLL Information:
 	 * Force DLL Resyncronization
 	 */
-	phy_control_reset(1, dmc);
-	phy_control_reset(0, dmc);
+
+	/*4. Set the PhyControl0.ctrl_start_point and PhyControl0.ctrl_inc bit-fields to correct value according to clock frequency. 
+	Set the PhyControl0.ctrl_dll_on bit-field to „1? to activate the PHY DLL
+	*/
+	writel((mem.control0 | CTRL_DLL_ON), &dmc->phycontrol0);
 
 	/* Set DLL Parameters */
+	/*5. DQS Cleaning: set the PhyControl1.ctrl_shiftc and PhyControl1.ctrl_offsetc bit-fields
+	to the proper value according to clock frequency, board delay and memory tDQSCK parameter
+	*/
 	writel(mem.control1, &dmc->phycontrol1);
 
 	/* DLL Start */
-	writel((mem.control0 | CTRL_START | CTRL_DLL_ON), &dmc->phycontrol0);
+	/*6. Set the PhyControl0.ctrl_start bit-field to "1".*/
+	writel(CTRL_START, &dmc->phycontrol0);
 
-	writel(mem.control2, &dmc->phycontrol2);
+	//writel(mem.control2, &dmc->phycontrol2);
 
 	/* Set Clock Ratio of Bus clock to Memory Clock */
+	/*7. Set the ConControl. At this moment, an auto refresh counter should be off.*/
 	writel(mem.concontrol, &dmc->concontrol);
 
 	/*
@@ -119,31 +134,49 @@ static void dmc_init(struct exynos4_dmc *dmc)
 	 * Memory Type: DDR3
 	 * Additional Latancy for PLL: 1 Cycle
 	 */
+	 /*8. Set the MemControl. At this moment, all power down modes and periodic ZQ(pzq_en) should be off.*/
 	writel(mem.memcontrol, &dmc->memcontrol);
 
+	/*9. Set the MemConfig0 register. If there are two external memory chips, also set the MemConfig1 register.*/
 	writel(mem.memconfig0, &dmc->memconfig0);
-	writel(mem.memconfig1, &dmc->memconfig1);
+	//writel(mem.memconfig1, &dmc->memconfig1);
 
 	/* Config Precharge Policy */
+	/*10. Set the PrechConfig and PwrdnConfig registers.*/
 	writel(mem.prechconfig, &dmc->prechconfig);
 	/*
 	 * TimingAref, TimingRow, TimingData, TimingPower Setting:
 	 * Values as per Memory AC Parameters
 	 */
+	 /*11. Set the TimingAref, TimingRow, TimingData and TimingPower registers according to memory AC parameters.*/
 	writel(mem.timingref, &dmc->timingref);
 	writel(mem.timingrow, &dmc->timingrow);
 	writel(mem.timingdata, &dmc->timingdata);
 	writel(mem.timingpower, &dmc->timingpower);
 
+	/*14*/
+	phy_control_reset(0, dmc);
+
+	/*15. Set the PhyControl1.fp_resync bit-field to „1? to update DLL information.*/
+	phy_control_reset(1, dmc);
+
 	/* Chip0: NOP Command: Assert and Hold CKE to high level */
+	/*19. Issue a NOP command using the DirectCmd register to assert and to hold CKE to a logic high level.*/
 	writel(DIRECT_CMD_NOP, &dmc->directcmd);
 	sdelay(0x100000);
 
 	/* Chip0: EMRS2, EMRS3, EMRS, MRS Commands Using Direct Command */
+	/*21. Issue an EMRS2 command using the DirectCmd register to program the operating parameters. Dynamic ODT
+	should be disabled. A10 and A9 should be low.
+	22. Issue an EMRS3 command using the DirectCmd register to program the operating parameters.
+	23. Issue an EMRS command using the DirectCmd register to enable the memory DLL.
+	24. Issue a MRS command using the DirectCmd register to reset the memory DLL.
+	*/
 	dmc_config_mrs(dmc, 0);
 	sdelay(0x100000);
 
 	/* Chip0: ZQINIT */
+	/*26. Issues a ZQINIT commands using the DirectCmd register*/
 	writel(DIRECT_CMD_ZQ, &dmc->directcmd);
 	sdelay(0x100000);
 

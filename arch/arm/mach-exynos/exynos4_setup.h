@@ -507,11 +507,12 @@ struct mem_timings {
 #define MEM_TYPE_DDR3		(0x6 << 8)
 #define MEM_WIDTH_32		(0x2 << 12)
 #define NUM_CHIP_2		(1 << 16)
+#define NUM_CHIP_1		(0 << 16)
 #define BL_8			(0x3 << 20)
 #define MEMCONTROL_VAL		(CLK_STOP_DISABLE | DPWRDN_DISABLE\
 				| DPWRDN_TYPE | TP_DISABLE | DSREF_DIABLE\
 				| ADD_LAT_PALL | MEM_TYPE_DDR3 | MEM_WIDTH_32\
-				| NUM_CHIP_2 | BL_8)
+				| NUM_CHIP_1 | BL_8)
 
 
 #define CHIP_BANK_8		(0x3 << 0)
@@ -561,7 +562,7 @@ struct mem_timings {
 
 #ifdef CONFIG_ORIGEN
 #define TIMINGREF_VAL		0x000000BB
-#define TIMINGROW_VAL		0x4046654f
+#define TIMINGROW_VAL		0x7846654F
 #define	TIMINGDATA_VAL		0x46400506
 #define	TIMINGPOWER_VAL		0x52000A3C
 #else
@@ -572,9 +573,9 @@ struct mem_timings {
 #define	TIMINGPOWER_VAL		0x4439033c
 #endif
 #ifdef DRAM_CLK_400
-#define TIMINGROW_VAL		0x45430506
-#define	TIMINGDATA_VAL		0x56500506
-#define	TIMINGPOWER_VAL		0x5444033d
+#define TIMINGROW_VAL		0x7846654F
+#define	TIMINGDATA_VAL		0x46400506
+#define	TIMINGPOWER_VAL		0x52000A3C
 #endif
 #endif
 #endif

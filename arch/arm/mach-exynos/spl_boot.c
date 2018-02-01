@@ -21,6 +21,7 @@
 #include <debug_uart.h>
 DECLARE_GLOBAL_DATA_PTR;
 
+#define DEBUG_PRIV
 /* Index into irom ptr table */
 enum index {
 	MMC_INDEX,
@@ -39,6 +40,14 @@ u32 irom_ptr_table[] = {
 	[SPI_INDEX] = 0x02020058,	/* iROM Function Pointer-SPI boot */
 	[USB_INDEX] = 0x02020070,	/* iROM Function Pointer-USB boot*/
 	};
+
+#define uswap_32(x) \
+	((((x) & 0xff000000) >> 24) | \
+	 (((x) & 0x00ff0000) >>  8) | \
+	 (((x) & 0x0000ff00) <<  8) | \
+	 (((x) & 0x000000ff) << 24))
+
+#define debug_le(x) printhex8(uswap_32(x))
 
 void *get_irom_func(int index)
 {
@@ -254,40 +263,6 @@ void copy_uboot_to_ram(void)
 		break;
 	}
 	
-#if 0
-	printascii("\n\n0x02023400 read:");
-	printhex8(*(unsigned int *)0x02023400);
-	printascii(" ");
-	printhex8(*(unsigned int *)(0x02023400+4));
-	printascii("\n\n===============\n\n" );
-	printascii("before copy_bl2 0x02045000:\n" );
-	printhex8(*(unsigned int *)0x02045000);
-	printascii(" ");
-	printhex8(*(unsigned int *)(0x02045000+4));
-	printascii("\n===============\n\n" );
-	if (copy_bl2)
-		copy_bl2(17, (16<<10)/512, 0x02045000);
-	printascii("after copy_bl2 0x02045000:\n" );	
-	printhex8(*(unsigned int *)0x02045000);
-	printascii(" ");
-	printhex8(*(unsigned int *)(0x02045000+4));
-	printascii("\n");
-
-	printascii("\n0x02050000 read:");
-	printhex8(*(unsigned int *)0x02050000);
-	writel(0x11111111,(unsigned int *)0x02050000);
-	printhex8(*(unsigned int *)0x02050000);
-
-	printascii("\n0x43E00000 read:");
-	printhex8(*(unsigned int *)0x43E00000);
-	writel(0x11111111,(unsigned int *)0x43E00000);
-	printhex8(*(unsigned int *)0x43E00000);
-
-	printascii("\n0xA0000000 read:");
-	printhex8(*(unsigned int *)0xA0000000);
-	writel(0x11111111,(unsigned int *)0xA0000000);
-	printhex8(*(unsigned int *)0xA0000000);
-#endif
  #if 0
 	if (copy_bl2)
 		copy_bl2(offset, size, CONFIG_SYS_TEXT_BASE);
@@ -296,23 +271,57 @@ void copy_uboot_to_ram(void)
 	if (copy_bl2) {
 		int i = 0;
 		unsigned char *buffer = (unsigned char *)0x02050000;
-		unsigned char *dest =(unsigned char  *)CONFIG_SYS_TEXT_BASE;
+		#ifndef DEBUG_PRIV
+		unsigned int *debug_buffer = (unsigned int *)0x02050000;
+		#endif
+		unsigned char  *dest =(unsigned char  *)CONFIG_SYS_TEXT_BASE;
 		for (i=0;i<8;i++){
+			memzero(buffer, 0x10000);
 			copy_bl2(offset, 0x10000/512, 0x02050000);
-			offset += 0x10000/512;
+			offset += (0x10000/512);
+
+			#ifndef DEBUG_PRIV
+			 int k = 0;
+			for(k=0;k<0x10000/4;k++) {
+				if (k%4==0)
+					printch('\n');
+				else
+					printch(' ');
+				debug_le(debug_buffer[k]);
+			}
+			k=0;
+			printascii("\n============================\n");
+			#endif
+			
 			int j = 0;
 			for (j=0;j<0x10000;j++) {
 				*dest++ = buffer[j];
 			}
 		}
+		#ifndef DEBUG_PRIV
+		debug_le(*(int *)(CONFIG_SYS_TEXT_BASE +0x7cf0));
+		printch('\n');
+		debug_le(*(int *)(CONFIG_SYS_TEXT_BASE +0x5a560));
+		printch('\n');
+		debug_le(*(int *)(CONFIG_SYS_TEXT_BASE +0x5a5a0));
+		printch('\n');
+		debug_le(*(int *)(CONFIG_SYS_TEXT_BASE +0x5a5a4));
+		printch('\n');
+		#endif
+		#ifndef DEBUG_PRIV
+		sdelay(0x100000);
+		unsigned int *debug_buffer = (unsigned int *)CONFIG_SYS_TEXT_BASE;
+		 int k = 0;
+		for(k=0;k<0x80000/4;k++) {
+			if (k%4==0)
+				printch('\n');
+			else
+				printch(' ');
+			debug_le(debug_buffer[k]);
+		}
+		#endif
 	}
 #endif
-	printascii("\nafter copy_bl2 0x43E00000:\n" );
-	//writel(0x12345678,(unsigned int *)(0x43E00000+0x5a4d0));
-	printhex8(*(unsigned int *)0x43E00000);
-	printascii(" ");
-	printhex8(*(unsigned int *)(0x43E00000+0x5a4d0));
-	printascii("\n");
 }
 
 void memzero(void *s, size_t n)
@@ -354,6 +363,7 @@ void board_init_f(unsigned long bootflag)
 
 	/* Jump to U-Boot image */
 	uboot = (void *)CONFIG_SYS_TEXT_BASE;
+	printascii("\n\nJump to uboot and never return\n");
 	(*uboot)();
 	/* Never returns Here */
 }

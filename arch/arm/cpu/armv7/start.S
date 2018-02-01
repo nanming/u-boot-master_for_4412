@@ -60,6 +60,33 @@ switch_to_hypervisor_ret:
 	orrne	r0, r0, #0x13		@ set SVC mode
 	orr	r0, r0, #0xc0		@ disable FIQ and IRQ
 	msr	cpsr,r0
+	
+#if 1
+			/* when we already run in ram, we don't need to relocate U-Boot.
+			 * and actually, memory controller must be configured before U-Boot
+			 * is running in ram.
+			 */
+			ldr r2, =0x40000000 	/* r1 <- original base addr in ram */
+			cmp 	r2, pc					/* compare r0, r1				   */
+			bgt 	1f			/* r0 == r1 then skip sdram init   */
+#endif
+		
+				/* LED3 Test Code */
+        #if 1
+				ldr r0, =0x11000060
+				ldr r1, [r0]
+				bic r1, r1, #0xf0
+				orr r1, r1, #0x10
+				str r1, [r0]
+		
+				ldr r0, =0x11000064
+				ldr r1, [r0]
+				bic r1, r1, #0x02
+				orr r1, r1, #0x02
+				str r1, [r0]
+        #endif
+		
+1:
 
 /*
  * Setup vector:
@@ -76,7 +103,6 @@ switch_to_hypervisor_ret:
 	ldr	r0, =_start
 	mcr	p15, 0, r0, c12, c0, 0	@Set VBAR
 #endif
-
 	/* the mask ROM code should have PLL and others stable */
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 	bl	cpu_init_cp15
@@ -84,20 +110,7 @@ switch_to_hypervisor_ret:
 	bl	cpu_init_crit
 #endif
 #endif
-        /* LED3 Test Code */
-        #if 0
-        ldr r0, =0x11000060
-        ldr r1, [r0]
-        bic r1, r1, #0xf0
-        orr r1, r1, #0x10
-        str r1, [r0]
 
-        ldr r0, =0x11000064
-        ldr r1, [r0]
-        bic r1, r1, #0x02
-        orr r1, r1, #0x02
-        str r1, [r0]
-        #endif
 	bl	_main
 
 /*------------------------------------------------------------------------------*/
