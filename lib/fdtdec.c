@@ -2,7 +2,7 @@
  * Copyright (c) 2011 The Chromium OS Authors.
  * SPDX-License-Identifier:	GPL-2.0+
  */
-
+#define DEBUG
 #ifndef USE_HOSTCC
 #include <common.h>
 #include <boot_fit.h>

@@ -15,10 +15,10 @@
 #define CONFIG_EXYNOS4210		1	/* which is a EXYNOS4210 SoC */
 #define CONFIG_ORIGEN			1	/* working with ORIGEN*/
 
-#define CONFIG_SYS_DCACHE_OFF		1
+/*#define CONFIG_SYS_DCACHE_OFF		1*//*For WARNING: Caches not enabled*/
 
 /* ORIGEN has 8 bank of DRAM */
-#define CONFIG_NR_DRAM_BANKS		8
+#define CONFIG_NR_DRAM_BANKS		4
 #define CONFIG_SYS_SDRAM_BASE		0x40000000
 #define PHYS_SDRAM_1			CONFIG_SYS_SDRAM_BASE
 #define SDRAM_BANK_SIZE			(512 << 20)	/* 256 MB */

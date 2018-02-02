@@ -9,7 +9,7 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
-
+#define DEBUG
 #include <common.h>
 #include <console.h>
 #include <environment.h>
@@ -42,6 +42,7 @@
 #include <dm/root.h>
 #include <linux/errno.h>
 #include <debug_uart.h>
+
 /*
  * Pointer to initial global data area
  *
@@ -757,34 +758,7 @@ __weak int arch_cpu_init_dm(void)
 	return 0;
 }
 
-#define GPIO_K_CON (*((volatile unsigned int *)0x11000060))
-#define GPIO_K_DATA (*((volatile unsigned int *)0x11000064))
-
-#define GPIO_D_CON (*((volatile unsigned int *)0x114000A0))
-#define GPIO_D_DATA (*((volatile unsigned int *)0x114000A4))
-static int beeps_on(void)
-{
-	GPIO_D_CON &= 0xfffffff0;
-	GPIO_D_CON |= 0x1;
-
-	GPIO_D_DATA &=0xfe;
-	GPIO_D_DATA |=0x1;
-	return 0;
-}
-
-static int led3_on(void)
-{
-	GPIO_K_CON &= 0xffffff0f;
-	GPIO_K_CON |= 0x10;
-
-	GPIO_K_DATA &=0xfd;
-	GPIO_K_DATA |=0x02;
-	return 0;
-}
-
 static const init_fnc_t init_sequence_f[] = {
-	led3_on,
-	//beeps_on,
 	setup_mon_len,
 #ifdef CONFIG_OF_CONTROL
 	fdtdec_setup,

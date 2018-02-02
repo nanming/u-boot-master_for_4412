@@ -61,7 +61,7 @@ switch_to_hypervisor_ret:
 	orr	r0, r0, #0xc0		@ disable FIQ and IRQ
 	msr	cpsr,r0
 	
-#if 1
+#if 0
 			/* when we already run in ram, we don't need to relocate U-Boot.
 			 * and actually, memory controller must be configured before U-Boot
 			 * is running in ram.
@@ -72,7 +72,7 @@ switch_to_hypervisor_ret:
 #endif
 		
 				/* LED3 Test Code */
-        #if 1
+        #if 0
 				ldr r0, =0x11000060
 				ldr r1, [r0]
 				bic r1, r1, #0xf0
@@ -86,7 +86,6 @@ switch_to_hypervisor_ret:
 				str r1, [r0]
         #endif
 		
-1:
 
 /*
  * Setup vector:
