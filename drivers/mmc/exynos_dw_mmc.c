@@ -264,6 +264,7 @@ static int exynos_dwmmc_probe(struct udevice *dev)
 	struct dwmci_host *host = &priv->host;
 	int err;
 
+	printf("===%s===\n", __func__);
 	err = exynos_dwmci_get_config(gd->fdt_blob, dev_of_offset(dev), host);
 	if (err)
 		return err;
@@ -283,7 +284,7 @@ static int exynos_dwmmc_probe(struct udevice *dev)
 static int exynos_dwmmc_bind(struct udevice *dev)
 {
 	struct exynos_mmc_plat *plat = dev_get_platdata(dev);
-
+	printf("===%s===\n", __func__);
 	return dwmci_bind(dev, &plat->mmc, &plat->cfg);
 }
 

@@ -164,7 +164,7 @@
 		compatible = "samsung,exynos4412-dw-mshc";
 		reg = <0x12550000 0x1000>;
 		interrupts = <0 131 0>;
-		status = "disabled";
+		status = "okay";
 	};
 
 };

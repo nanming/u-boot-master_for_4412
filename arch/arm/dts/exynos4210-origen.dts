@@ -22,6 +22,8 @@
 	aliases {
 		serial0 = "/serial@13800000";
 		console = "/serial@13820000";
+        mmc0 = &mshc_0;
+        mmc1 = &sdhci2;
 	};
 };
 
@@ -31,3 +33,14 @@
 	cd-gpios = <&gpk2 2 0>;
 	status = "okay";
 };
+&mshc_0 {
+    samsung,bus-width = <8>;
+    samsung,timing = <1 3 3>;
+    samsung,removable = <0>;
+    fifoth_val = <0x203f0040>;
+    bus_hz = <400000000>;
+    div = <0x3>;
+    index = <4>;
+    status = "okay";
+};
+
